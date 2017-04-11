@@ -5,9 +5,9 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import com.aurea.deadcode.rest.dto.BasicRepoData;
-import com.aurea.deadcode.rest.dto.CompleteRepoData;
+import com.aurea.deadcode.rest.dto.FullRepoData;
 import com.aurea.deadcode.rest.dto.RepoListData;
-import com.aurea.deadcode.rest.dto.RepoRequest;
+import com.aurea.deadcode.rest.dto.NewRepoRequest;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,32 +25,22 @@ public interface RepoResource {
 
     @ApiOperation(value = "addRepo",  produces = MediaType.APPLICATION_JSON,  consumes = MediaType.APPLICATION_JSON,
             notes = "Adds GitHub repository to be analyzed agains Dead Code.")
-    @ApiParam(value = "Repository request i.e. URL and branch", name = "id", required = true)
+    @ApiParam(value = "Repository request i.e. URL and branch", required = true)
     @ApiResponses(value = { 
             @ApiResponse(code = 200, message = "Success", response = BasicRepoData.class),
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 409, message = "Conflict - repository already exists", response = BasicRepoData.class),
             @ApiResponse(code = 500, message = "Failure")
     })
-    ResponseEntity<BasicRepoData> addRepo(final RepoRequest request);
+    ResponseEntity<BasicRepoData> addRepo(final NewRepoRequest request);
 
     @ApiOperation(value = "getRepo", produces = MediaType.APPLICATION_JSON,
             notes = "Gets the Dead Code occurrences from a given github repository.")
-    @ApiParam(value = "Repository ID", name = "id", required = true)
+    @ApiParam(value = "Repository UUID", name = "uuid", required = true)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = CompleteRepoData.class),
+            @ApiResponse(code = 200, message = "Success", response = FullRepoData.class),
             @ApiResponse(code = 404, message = "Repository Not Found"),
             @ApiResponse(code = 500, message = "Failure")
     })
-    ResponseEntity<CompleteRepoData> getRepo(final String id);
-
-    @ApiOperation(value = "forceRepoAnalysis", produces = MediaType.APPLICATION_JSON,
-            notes = "Forces the Dead Code analysis on given repsitory.")
-    @ApiParam(value = "Repository ID", name = "id", required = true)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = BasicRepoData.class),
-            @ApiResponse(code = 404, message = "Repository Not Found"),
-            @ApiResponse(code = 500, message = "Failure")
-    })
-    ResponseEntity<BasicRepoData> forceRepoAnalysis(final String id);
+    ResponseEntity<FullRepoData> getRepo(final String uuid);
 }

@@ -2,45 +2,37 @@ package com.aurea.deadcode.rest.dto;
 
 import java.util.Date;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.aurea.deadcode.model.CompletionStatus;
+import com.aurea.deadcode.util.ToString;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-public class BasicRepoData {
+@JsonInclude(Include.NON_NULL)
+public class BasicRepoData extends NewRepoRequest {
     private final String uuid;
-    private final String url;
-    private final String branch;
     private final CompletionStatus status;
     private final Date added;
-    private final Date processingStarted;
-    private final Date processingEnded;
-    private final Long processingDuration;
+    private final Date analysisStarted;
+    private final Date analysisEnded;
+    private final Long analysisDuration;
     private final String error;
 
-    protected BasicRepoData(@Nonnull final String uuid, @Nonnull final String url, @Nullable final String branch, 
-            @Nonnull final CompletionStatus status, @Nonnull final Date added, @Nullable final Date processingStarted, 
-            @Nullable final Date processingEnded, @Nullable final Long processingDuration, @Nullable final String error) {
+    BasicRepoData(final String uuid, final String url, final String branch, 
+            final CompletionStatus status, final Date added, final Date analysisStarted, 
+            final Date analysisEnded, final Long analysisDuration, final String error) {
 
+        super(url, branch);
         this.uuid = uuid;
-        this.url = url;
-        this.branch = branch;
         this.status = status;
         this.added = added;
-        this.processingStarted = processingStarted;
-        this.processingEnded = processingEnded;
-        this.processingDuration = processingDuration;
+        this.analysisStarted = analysisStarted;
+        this.analysisEnded = analysisEnded;
+        this.analysisDuration = analysisDuration;
         this.error = error;
     }
 
-    public String getId() {
+    public String getUuid() {
         return uuid;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getBranch() {
-        return branch;
     }
 
     public CompletionStatus getStatus() {
@@ -51,19 +43,24 @@ public class BasicRepoData {
         return added;
     }
 
-    public Date getProcessingStarted() {
-        return processingStarted;
+    public Date getAnalysisStarted() {
+        return analysisStarted;
     }
 
-    public Date getProcessingEnded() {
-        return processingEnded;
+    public Date getAnalysisEnded() {
+        return analysisEnded;
     }
 
-    public Long getProcessingDuration() {
-        return processingDuration;
+    public Long getAnalysisDuration() {
+        return analysisDuration;
     }
 
     public String getError() {
         return error;
+    }
+
+    @Override
+    public String toString() {
+        return ToString.toString(this);
     }
 }

@@ -1,7 +1,6 @@
 package com.aurea.deadcode.rest.dto;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.aurea.deadcode.util.ToString;
 
 public class Violation {
     private final String entityName;
@@ -10,8 +9,8 @@ public class Violation {
     private final Integer startLine;
     private final Integer endLine;
 
-    public Violation(@Nonnull final String entityName, @Nonnull final ViolationType type,
-            @Nonnull final ViolationSource source, @Nullable final Integer startLine, @Nullable final Integer endLine) {
+    public Violation(final String entityName, final ViolationType type,
+            final ViolationSource source, final Integer startLine, final Integer endLine) {
 
         this.entityName = entityName;
         this.type = type;
@@ -38,5 +37,10 @@ public class Violation {
 
     public Integer getEndLine() {
         return endLine;
+    }
+
+    @Override
+    public String toString() {
+        return ToString.toString(this);
     }
 }

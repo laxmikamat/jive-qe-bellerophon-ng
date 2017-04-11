@@ -1,7 +1,18 @@
 package com.aurea.deadcode;
 
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.Queue;
+import javax.jms.Session;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.jms.annotation.EnableJms;
+import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.connection.CachingConnectionFactory;
 
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -13,7 +24,39 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
+@EnableJms
 public class AppConfig {
+    @Autowired
+    protected Environment env;
+
+    @Bean
+    public Queue reposQueue() throws JMSException {
+        return connectionFactory()
+                .createConnection()
+                .createSession(false, Session.AUTO_ACKNOWLEDGE)
+                .createQueue("queue.repos");
+    }
+
+    @Bean
+    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
+        final DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory());
+        factory.setConcurrency("3-10");
+        factory.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
+        factory.setSessionTransacted(false);
+        return factory;
+    }
+
+    @Bean
+    public ConnectionFactory connectionFactory() {
+        final String url = env.getRequiredProperty("jms.broker.url");
+        final ActiveMQConnectionFactory cf = new ActiveMQConnectionFactory(url);
+        final CachingConnectionFactory cachingCf = new CachingConnectionFactory(cf);
+        cachingCf.setSessionCacheSize(20);
+
+        return cachingCf;
+    }
+
     @Bean
     public Docket newsApi() {
         return new Docket(DocumentationType.SWAGGER_2)

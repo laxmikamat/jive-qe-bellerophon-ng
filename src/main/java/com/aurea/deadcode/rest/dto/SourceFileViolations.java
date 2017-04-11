@@ -3,15 +3,14 @@ package com.aurea.deadcode.rest.dto;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.aurea.deadcode.util.ToString;
 
 public class SourceFileViolations {
     private final String fileName;
     private final int violationCount;
     private final List<Violation> violations;
 
-    public SourceFileViolations(@Nonnull final String fileName, @Nullable final List<Violation> violations) {
+    public SourceFileViolations(final String fileName, final List<Violation> violations) {
         this.fileName = fileName;
         this.violations = violations;
         this.violationCount = violations != null ? violations.size() : null;
@@ -27,5 +26,10 @@ public class SourceFileViolations {
 
     public int getViolationCount() {
         return violationCount;
+    }
+
+    @Override
+    public String toString() {
+        return ToString.toString(this);
     }
 }

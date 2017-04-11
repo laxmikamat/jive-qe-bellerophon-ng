@@ -3,33 +3,35 @@ package com.aurea.deadcode.rest.dto;
 import java.util.Date;
 import java.util.List;
 
+import com.aurea.deadcode.model.CompletionStatus;
+
 public class RepoDataBuilder {
-    private String id;
+    private String uuid;
     private String url;
     private String branch;
     private CompletionStatus status;
     private Date added;
-    private Date processingStarted;
-    private Date processingEnded;
-    private Long processingDuration;
+    private Date analysisStarted;
+    private Date analysisEnded;
+    private Long analysisDuration;
     private List<SourceFileViolations> sourceFileViolations;
     private String error;
 
-    public BasicRepoData basicRepoData() {
-        return new BasicRepoData(id, url, branch, 
-                status, added, processingStarted, 
-                processingEnded, processingDuration, error);
+    public BasicRepoData buildBasicRepoData() {
+        return new BasicRepoData(uuid, url, branch, 
+                status, added, analysisStarted, 
+                analysisEnded, analysisDuration, error);
     }
 
-    public BasicRepoData completeRepoData() {
-        return new CompleteRepoData(new BasicRepoData(id, url, branch, 
-                status, added, processingStarted, 
-                processingEnded, processingDuration, error),
+    public FullRepoData buildFullRepoData() {
+        return new FullRepoData(new BasicRepoData(uuid, url, branch, 
+                status, added, analysisStarted, 
+                analysisEnded, analysisDuration, error),
                 sourceFileViolations);
     }
 
-    public RepoDataBuilder id(final String id) {
-        this.id = id;
+    public RepoDataBuilder uuid(final String uuid) {
+        this.uuid = uuid;
         return this;
     }
 
@@ -53,18 +55,18 @@ public class RepoDataBuilder {
         return this;
     }
 
-    public RepoDataBuilder processingStarted(final Date processingStarted) {
-        this.processingStarted = processingStarted;
+    public RepoDataBuilder analysisStarted(final Date analysisStarted) {
+        this.analysisStarted = analysisStarted;
         return this;
     }
 
-    public RepoDataBuilder processingEnded(final Date processingEnded) {
-        this.processingEnded = processingEnded;
+    public RepoDataBuilder analysisEnded(final Date analysisEnded) {
+        this.analysisEnded = analysisEnded;
         return this;
     }
 
-    public RepoDataBuilder processingDuration(final Long processingDuration) {
-        this.processingDuration = processingDuration;
+    public RepoDataBuilder processingDuration(final Long analysisDuration) {
+        this.analysisDuration = analysisDuration;
         return this;
     }
 
