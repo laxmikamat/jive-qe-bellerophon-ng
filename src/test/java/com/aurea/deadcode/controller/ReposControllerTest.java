@@ -25,6 +25,7 @@ import com.aurea.deadcode.util.UuidGenerator;
 import com.google.gson.Gson;
 
 public class ReposControllerTest extends BaseMvcTest {
+    private static final int REPEAT_COUNT = 100;
     private static final String URL_BASE = "git@github.com:/";
     
     @Autowired
@@ -40,7 +41,7 @@ public class ReposControllerTest extends BaseMvcTest {
 
     @Test
     public void shouldGetAllRepos() throws Exception {
-        final List<ScmRepo> repos = generateAndStoreRandomRepos(5);
+        final List<ScmRepo> repos = generateAndStoreRandomRepos(REPEAT_COUNT);
         final ResultActions test = mockMvc.perform(get("/rest/repos"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8));
@@ -53,7 +54,7 @@ public class ReposControllerTest extends BaseMvcTest {
     
     @Test
     public void shouldGetSingleRepo() throws Exception {
-        final List<ScmRepo> repos = generateAndStoreRandomRepos(5);
+        final List<ScmRepo> repos = generateAndStoreRandomRepos(1000);
         for (final ScmRepo repo : repos) {
             assertValidRepo(mockMvc.perform(get("/rest/repos/" + repo.getUuid())), repo);
         }
@@ -68,10 +69,9 @@ public class ReposControllerTest extends BaseMvcTest {
     
     @Test
     public void shouldAddUniqueRepos() throws Exception {
-        final List<ScmRepo> repos = generateRandomRepos(5);
+        final List<ScmRepo> repos = generateRandomRepos(1000);
         for (final ScmRepo repo : repos) {
-            final NewRepoRequest repoRq = new NewRepoRequest();
-            repoRq.setUrl(repo.getUrl());
+            final NewRepoRequest repoRq = new NewRepoRequest(repo.getUrl());
             final ResultActions test = mockMvc.perform(post("/rest/repos")
                     .content(new Gson().toJson(repoRq))
                     .contentType(APPLICATION_JSON_UTF8));
@@ -83,8 +83,7 @@ public class ReposControllerTest extends BaseMvcTest {
     
     @Test
     public void shouldFailOnAddingDuplicateRepo() throws Exception {
-        final NewRepoRequest repoRq = new NewRepoRequest();
-        repoRq.setUrl(URL_BASE + "repo");
+        final NewRepoRequest repoRq = new NewRepoRequest(URL_BASE + "repo");
         final Gson gson = new Gson();
         mockMvc.perform(post("/rest/repos")
                 .content(gson.toJson(repoRq))
@@ -99,8 +98,7 @@ public class ReposControllerTest extends BaseMvcTest {
 
     @Test
     public void shouldFailOnAddingInvalidRepo() throws Exception {
-        final NewRepoRequest repoRq = new NewRepoRequest();
-        repoRq.setUrl("invalid uri");
+        final NewRepoRequest repoRq = new NewRepoRequest("invalid uri");
         mockMvc.perform(post("/rest/repos")
                 .content(new Gson().toJson(repoRq))
                 .contentType(APPLICATION_JSON_UTF8))
