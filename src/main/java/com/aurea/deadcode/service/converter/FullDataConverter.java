@@ -13,7 +13,6 @@ import com.aurea.deadcode.util.UuidGenerator;
 
 @Component
 public class FullDataConverter implements DataConverter<ScmRepo, FullRepoData> {
-
     @Autowired
     protected UuidGenerator uuidGen;
 
@@ -23,10 +22,6 @@ public class FullDataConverter implements DataConverter<ScmRepo, FullRepoData> {
 
     @Override
     public FullRepoData model2Dto(final ScmRepo model) {
-        if (model == null) {
-            return null;
-        }
-
         return new RepoDataBuilder()
                 .uuid(model.getUuid())
                 .url(model.getUrl())
@@ -34,6 +29,7 @@ public class FullDataConverter implements DataConverter<ScmRepo, FullRepoData> {
                 .added(model.getAdded())
                 .analysisStarted(model.getAnalysisStarted())
                 .analysisEnded(model.getAnalysisEnded())
+                .status(model.getCompletionStatus())
                 .buildFullRepoData();
     }
 
@@ -41,5 +37,4 @@ public class FullDataConverter implements DataConverter<ScmRepo, FullRepoData> {
     public ScmRepo dto2Model(final FullRepoData dto) {
         return converter.dto2Model(dto);
     }
-
 }

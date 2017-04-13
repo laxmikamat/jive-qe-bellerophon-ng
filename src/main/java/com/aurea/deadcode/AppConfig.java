@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
-import org.springframework.jms.connection.CachingConnectionFactory;
 
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -50,11 +49,7 @@ public class AppConfig {
     @Bean
     public ConnectionFactory connectionFactory() {
         final String url = env.getRequiredProperty("jms.broker.url");
-        final ActiveMQConnectionFactory cf = new ActiveMQConnectionFactory(url);
-        final CachingConnectionFactory cachingCf = new CachingConnectionFactory(cf);
-        cachingCf.setSessionCacheSize(20);
-
-        return cachingCf;
+        return new ActiveMQConnectionFactory(url);
     }
 
     @Bean

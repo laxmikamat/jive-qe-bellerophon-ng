@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import com.aurea.deadcode.jpa.repo.ScmRepoRepository;
+import com.aurea.deadcode.jpa.ScmRepoRepository;
 import com.aurea.deadcode.model.ScmRepo;
 import com.aurea.deadcode.notif.EventType;
 import com.aurea.deadcode.notif.Notification;

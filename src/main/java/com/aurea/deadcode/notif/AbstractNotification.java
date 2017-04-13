@@ -11,7 +11,7 @@ import org.springframework.jms.core.JmsTemplate;
 import com.google.gson.Gson;
 
 public abstract class AbstractNotification<E extends Enum<E>, T> implements Notification<E, T> {
-    protected JmsTemplate jmsTemplate;
+    private JmsTemplate jmsTemplate;
 
     @Autowired
     @Named("reposQueue")

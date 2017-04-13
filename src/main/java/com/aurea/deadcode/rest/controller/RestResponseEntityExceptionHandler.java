@@ -1,4 +1,4 @@
-package com.aurea.deadcode.controller;
+package com.aurea.deadcode.rest.controller;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

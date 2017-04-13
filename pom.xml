@@ -12,7 +12,7 @@
     <version.commons-io>2.5</version.commons-io>
     <version.commons-lang>3.5</version.commons-lang>
     <version.mockito>1.9.5</version.mockito>
-    <version.activemq>5.12.3</version.activemq>
+    <version.activemq>5.14.4</version.activemq>
   </properties>
 
   <dependencyManagement>
@@ -96,14 +96,18 @@
 
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-all</artifactId>
-      <version>${version.activemq}</version>
+      <artifactId>activemq-broker</artifactId>
     </dependency>
 
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
       <version>1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
     </dependency>
 
     <dependency>
@@ -126,9 +130,15 @@
     </dependency>
 
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>${version.mockito}</version>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.activemq.tooling</groupId>
+      <artifactId>activemq-junit</artifactId>
+      <version>${version.activemq}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -145,6 +155,10 @@
             <artifactId>spring-boot-maven-plugin</artifactId>
             <version>${version.spring-boot.maven-plugin}</version>
             <configuration>
+              <profiles>
+                <profile>default</profile>
+                <profile>jms</profile>
+              </profiles>
               <mainClass>com.aurea.deadcode.Application</mainClass>
               <jvmArguments>
                 -Xdebug

@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-public interface RepoResource {
+public interface ReposResource {
     @ApiOperation(value = "getAllRepos", produces = MediaType.APPLICATION_JSON,
             notes = "Gets the list of all repositories that have already been added along with their status.")
     @ApiResponses(value = { 

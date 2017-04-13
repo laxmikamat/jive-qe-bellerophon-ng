@@ -16,10 +16,6 @@ public class BasicDataConverter implements DataConverter<ScmRepo, BasicRepoData>
 
     @Override
     public BasicRepoData model2Dto(final ScmRepo model) {
-        if (model == null) {
-            return null;
-        }
-
         return new RepoDataBuilder()
                 .uuid(model.getUuid())
                 .url(model.getUrl())
@@ -27,6 +23,7 @@ public class BasicDataConverter implements DataConverter<ScmRepo, BasicRepoData>
                 .added(model.getAdded())
                 .analysisStarted(model.getAnalysisStarted())
                 .analysisEnded(model.getAnalysisEnded())
+                .status(model.getCompletionStatus())
                 .buildBasicRepoData();
     }
 

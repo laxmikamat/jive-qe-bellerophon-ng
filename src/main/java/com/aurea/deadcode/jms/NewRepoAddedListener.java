@@ -10,10 +10,11 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 
-import com.aurea.deadcode.jpa.repo.ScmRepoRepository;
+import com.aurea.deadcode.jpa.ScmRepoRepository;
 import com.aurea.deadcode.model.ScmRepo;
 import com.aurea.deadcode.rest.dto.BasicRepoData;
 import com.aurea.deadcode.rest.dto.NewRepoRequest;
@@ -24,6 +25,7 @@ import com.aurea.deadcode.service.exception.ServiceException;
 import com.google.gson.Gson;
 
 @Service
+@Profile("jms")
 public class NewRepoAddedListener {
     private static final Logger LOG = LoggerFactory.getLogger(NewRepoAddedListener.class);
 
