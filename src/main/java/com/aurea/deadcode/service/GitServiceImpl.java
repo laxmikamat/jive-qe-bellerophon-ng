@@ -9,21 +9,23 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.aurea.deadcode.model.ScmRepo;
 import com.aurea.deadcode.service.exception.ServiceException;
 
-public class GitHelperImpl implements GitHelper {
-    private static final Logger LOG = LoggerFactory.getLogger(GitHelperImpl.class);
+@Service
+public class GitServiceImpl implements GitService {
+    private static final Logger LOG = LoggerFactory.getLogger(GitServiceImpl.class);
 
     @Value("${git.clone.root.dir}")
     protected String cloneRootDir;
 
     @Override
     public void cloneNewRepo(final ScmRepo repo) throws ServiceException {
-        File repoDir = new File(cloneRootDir + File.pathSeparator + repo.getUuid());
-        if (!repoDir.isDirectory() || !repoDir.exists()) {
-            LOG.warn("'" + cloneRootDir + "' does not exist or is not a directory.");
+        File repoDir = new File(cloneRootDir + File.separator + repo.getUuid());
+        if (repoDir.exists() || (!repoDir.exists() && !repoDir.mkdir())) {
+            LOG.warn("'" + repoDir.getAbsolutePath() + "' alread exists or cannot be created.");
             try {
                 repoDir = Files.createTempDirectory(repo.getUuid()).toFile();
             } catch (final IOException e) {
@@ -32,12 +34,14 @@ public class GitHelperImpl implements GitHelper {
         }
 
         try {
-            LOG.info("Cloning git repo '" + repo.getUrl() + "' to '" + repoDir.getAbsolutePath() + "'");
+            LOG.info("Cloning Git repo '" + repo.getUrl() + "' to '" + repoDir.getAbsolutePath() + "'");
             Git.cloneRepository()
-            .setDirectory(repoDir)
-            .setURI(repo.getUrl())
-            .setBranch(repo.getBranch())
-            .call();
+                .setDirectory(repoDir)
+                .setURI(repo.getUrl())
+                .setBranch(repo.getBranch())
+                .call();
+
+            LOG.info("Git repo '" + repo.getUrl() + "' cloned in '" + repoDir.getAbsolutePath() + "'");
         } catch (final GitAPIException e) {
             repo.setError(e.toString());
             throw new ServiceException("Unable to clone Git repo '" + repo.getUrl() + "'", e);

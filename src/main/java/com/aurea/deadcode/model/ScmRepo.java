@@ -11,6 +11,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.aurea.deadcode.util.ToString;
+
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "url", "branch" }) })
 public class ScmRepo {
@@ -138,6 +140,11 @@ public class ScmRepo {
 
     public void setViolations(final String violations) {
         this.violations = violations;
+    }
+    
+    @Override
+    public String toString() {
+        return ToString.toString(this);
     }
 
 }

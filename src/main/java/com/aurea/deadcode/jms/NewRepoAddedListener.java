@@ -15,10 +15,10 @@ import org.springframework.stereotype.Service;
 
 import com.aurea.deadcode.jpa.repo.ScmRepoRepository;
 import com.aurea.deadcode.model.ScmRepo;
-import com.aurea.deadcode.rest.dto.NewRepoRequest;
 import com.aurea.deadcode.rest.dto.BasicRepoData;
-import com.aurea.deadcode.service.CodeAnalyzer;
-import com.aurea.deadcode.service.GitHelper;
+import com.aurea.deadcode.rest.dto.NewRepoRequest;
+import com.aurea.deadcode.service.CodeAnalyzerService;
+import com.aurea.deadcode.service.GitService;
 import com.aurea.deadcode.service.UnderstandHelper;
 import com.aurea.deadcode.service.exception.ServiceException;
 import com.google.gson.Gson;
@@ -28,10 +28,10 @@ public class NewRepoAddedListener {
     private static final Logger LOG = LoggerFactory.getLogger(NewRepoAddedListener.class);
 
     @Autowired
-    protected CodeAnalyzer codeAnalyzer;
+    protected CodeAnalyzerService codeAnalyzer;
 
     @Autowired
-    protected GitHelper gitHelper;
+    protected GitService gitHelper;
 
     @Autowired
     protected UnderstandHelper understandHelper;
@@ -50,8 +50,10 @@ public class NewRepoAddedListener {
             understandHelper.buildUnderstandDb(repo);
             codeAnalyzer.analyzeRepo(repo);
             watch.stop();
+            repo.setAnalysisEnded(new Date());
             repo.setAnalysisStarted(new Date(watch.getStartTime()));
-            repo.setAnalysisEnded(new Date(watch.getTime()));
+            
+            LOG.info("Updating repo data in DB: " + repo);
             scmRepository.save(repo);
         } catch (final ServiceException e) {
             // log error

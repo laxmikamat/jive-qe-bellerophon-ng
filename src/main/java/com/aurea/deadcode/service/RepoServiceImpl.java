@@ -11,19 +11,21 @@ import org.eclipse.jgit.transport.URIish;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.aurea.deadcode.jpa.repo.ScmRepoRepository;
 import com.aurea.deadcode.model.ScmRepo;
 import com.aurea.deadcode.notif.EventType;
 import com.aurea.deadcode.notif.Notification;
-import com.aurea.deadcode.rest.dto.NewRepoRequest;
 import com.aurea.deadcode.rest.dto.BasicRepoData;
 import com.aurea.deadcode.rest.dto.FullRepoData;
+import com.aurea.deadcode.rest.dto.NewRepoRequest;
 import com.aurea.deadcode.rest.dto.RepoDataBuilder;
 import com.aurea.deadcode.rest.dto.RepoListData;
 import com.aurea.deadcode.service.converter.DataConverter;
 import com.aurea.deadcode.service.exception.BadRequestException;
+import com.aurea.deadcode.service.exception.ConflictException;
 import com.aurea.deadcode.service.exception.NotFoundException;
 import com.aurea.deadcode.service.exception.ServiceException;
 import com.google.common.collect.Lists;
@@ -72,14 +74,19 @@ public class RepoServiceImpl implements RepoService {
             throw new BadRequestException(e.getMessage(), e);
         }
 
-        final BasicRepoData result = basicConverter.model2Dto(scmRepoRepository.save(basicConverter.dto2Model(
-                new RepoDataBuilder()
-                .url(url)
-                .branch(branch)
-                .buildBasicRepoData())));
-
-        notifManager.notify(EventType.NEW_REPO_ADDED, result);
-        return result;
+        final BasicRepoData repo = new RepoDataBuilder()
+            .url(url)
+            .branch(branch)
+            .buildBasicRepoData();
+        
+        try {
+            final BasicRepoData result = basicConverter.model2Dto(scmRepoRepository.save(basicConverter.dto2Model(repo)));
+            notifManager.notify(EventType.NEW_REPO_ADDED, result);
+            return result;
+        } catch (final DataIntegrityViolationException e) {
+            LOG.info("Repo " + repo + " (probably) already exists: " + e.getMessage());
+            throw new ConflictException(repo, e);
+        }
     }
 
     @Override
