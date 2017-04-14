@@ -7,7 +7,7 @@ import com.aurea.deadcode.model.ScmRepo;
 import com.aurea.deadcode.service.exception.ServiceException;
 
 @Service
-public class UnderstandHelperImpl implements UnderstandHelper {
+public class UnderstandServiceImpl implements UnderstandService {
 
     @Value("${understand.exec}")
     protected String understand;

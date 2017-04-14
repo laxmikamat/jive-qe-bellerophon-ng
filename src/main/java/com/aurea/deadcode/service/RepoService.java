@@ -1,15 +1,13 @@
 package com.aurea.deadcode.service;
 
-import com.aurea.deadcode.rest.dto.BasicRepoData;
-import com.aurea.deadcode.rest.dto.FullRepoData;
-import com.aurea.deadcode.rest.dto.RepoListData;
+import java.util.List;
+
+import com.aurea.deadcode.model.ScmRepo;
 
 public interface RepoService {
-    RepoListData getAllRepos();
+    List<ScmRepo> getAllRepos();
 
-    BasicRepoData create(String url, String branch);
+    ScmRepo create(ScmRepo repo);
 
-    FullRepoData read(String uuid);
-
-    BasicRepoData update(BasicRepoData repo);
+    ScmRepo read(String uuid);
 }

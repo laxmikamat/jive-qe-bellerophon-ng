@@ -29,11 +29,6 @@ public class BasicDataConverter implements DataConverter<ScmRepo, BasicRepoData>
 
     @Override
     public ScmRepo dto2Model(final BasicRepoData dto) {
-        final ScmRepo repo = new ScmRepo();
-        repo.setUuid(uuidGen.generateUUID().toString());
-        repo.setUrl(dto.getUrl());
-        repo.setBranch(dto.getBranch());
-        return repo;
+        throw new UnsupportedOperationException("Unused");
     }
-
 }

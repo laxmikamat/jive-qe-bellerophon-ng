@@ -20,7 +20,7 @@ public class ScmRepo {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false, updatable = false)
+    @Column(unique = true, nullable = false, updatable = false)
     private String uuid;
 
     @Column(nullable = false)

@@ -1,12 +1,9 @@
 package com.aurea.deadcode.jms;
 
-import java.util.Date;
-
 import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 
-import com.aurea.deadcode.jpa.ScmRepoRepository;
-import com.aurea.deadcode.model.ScmRepo;
-import com.aurea.deadcode.rest.dto.BasicRepoData;
-import com.aurea.deadcode.rest.dto.NewRepoRequest;
-import com.aurea.deadcode.service.CodeAnalyzerService;
-import com.aurea.deadcode.service.GitService;
-import com.aurea.deadcode.service.UnderstandHelper;
-import com.aurea.deadcode.service.exception.ServiceException;
+import com.aurea.deadcode.service.RepoOrchestratorService;
 import com.google.gson.Gson;
 
 @Service
@@ -30,35 +20,11 @@ public class NewRepoAddedListener {
     private static final Logger LOG = LoggerFactory.getLogger(NewRepoAddedListener.class);
 
     @Autowired
-    protected CodeAnalyzerService codeAnalyzer;
-
-    @Autowired
-    protected GitService gitHelper;
-
-    @Autowired
-    protected UnderstandHelper understandHelper;
-
-    @Autowired
-    protected ScmRepoRepository scmRepository;
-
+    protected RepoOrchestratorService repoOrchestratorService;
+    
     @JmsListener(destination = "queue.repos", selector = "EventType = 'NEW_REPO_ADDED'")
     public void onMessage(final TextMessage msg, final Session session) throws JMSException {
-        LOG.info("New repo added: " + msg.getText());
-        final NewRepoRequest request = new Gson().fromJson(msg.getText(), BasicRepoData.class);
-        final ScmRepo repo = scmRepository.findByUrlAndBranch(request.getUrl(), request.getBranch());
-        final StopWatch watch = StopWatch.createStarted();
-        try {
-            gitHelper.cloneNewRepo(repo);
-            understandHelper.buildUnderstandDb(repo);
-            codeAnalyzer.analyzeRepo(repo);
-            watch.stop();
-            repo.setAnalysisEnded(new Date());
-            repo.setAnalysisStarted(new Date(watch.getStartTime()));
-            
-            LOG.info("Updating repo data in DB: " + repo);
-            scmRepository.save(repo);
-        } catch (final ServiceException e) {
-            // log error
-        }
+        LOG.info("New repo added with UUID: " + msg.getText());
+        repoOrchestratorService.newRepoAdded(new Gson().fromJson(msg.getText(), String.class));
     }
 }
