@@ -1,13 +1,15 @@
 package com.aurea.deadcode.jms;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.hamcrest.CoreMatchers.*;
 
+import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -34,6 +36,11 @@ import com.aurea.deadcode.rest.dto.BasicRepoData;
 import com.aurea.deadcode.rest.dto.NewRepoRequest;
 import com.aurea.deadcode.service.RepoOrchestratorService;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 
 @Service
 @ActiveProfiles("testJms")
@@ -66,7 +73,7 @@ public class NewRepoAddedListenerTest extends BaseMvcTest {
     
     @Test
     public void shouldCallJmsListener() throws Exception {
-        final Gson gson = new Gson();
+        final Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new DateDeserializer()).create();
         for (int i = 0; i < 1000; i++) {
             final ResultActions result = mockMvc.perform(post("/rest/repos")
                     .content(gson.toJson(new NewRepoRequest("git@git.com:/repo" + i)))
@@ -83,6 +90,7 @@ public class NewRepoAddedListenerTest extends BaseMvcTest {
         }
     }
     
+    
     @Profile("testJms")
     @JmsListener(destination = "queue.repos", selector = "EventType = 'NEW_REPO_ADDED'")
     public void onMessage(final TextMessage msg, final Session session) throws JMSException {
@@ -90,17 +98,12 @@ public class NewRepoAddedListenerTest extends BaseMvcTest {
     }
 
     /**
-     * Auxiliary DTO class.
+     * Gson does not understand Date serialized as long, so we need this adapter.
      */
-    public static class TestRepoData {
-        private String uuid;
-        
-        public String getUuid() {
-            return uuid;
-        }
-        
-        public void setUuid(final String uuid) {
-            this.uuid = uuid;
+    private class DateDeserializer implements JsonDeserializer<Date> {
+        @Override
+        public Date deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
+            return new Date(json.getAsLong());
         }
     }
 }

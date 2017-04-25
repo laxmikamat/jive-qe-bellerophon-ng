@@ -26,7 +26,8 @@ import com.google.gson.Gson;
 
 public class ReposControllerTest extends BaseMvcTest {
     private static final int REPEAT_COUNT = 100;
-    private static final String URL_BASE = "git@github.com:/";
+    private static final String GIT_URL_BASE = "git@github.com:/";
+    private static final String HTTP_URL_BASE = "https://github.com/";
     
     @Autowired
     private ScmRepoRepository scmRepository;
@@ -83,7 +84,7 @@ public class ReposControllerTest extends BaseMvcTest {
     
     @Test
     public void shouldFailOnAddingDuplicateRepo() throws Exception {
-        final NewRepoRequest repoRq = new NewRepoRequest(URL_BASE + "repo");
+        final NewRepoRequest repoRq = new NewRepoRequest(GIT_URL_BASE + "repo");
         final Gson gson = new Gson();
         mockMvc.perform(post("/rest/repos")
                 .content(gson.toJson(repoRq))
@@ -129,7 +130,12 @@ public class ReposControllerTest extends BaseMvcTest {
             final ScmRepo repo = new ScmRepo();
             repo.setUuid(uuid);
             repo.setBranch("master");
-            repo.setUrl(URL_BASE + uuid);
+            if ((i % 2) == 0) {
+                repo.setUrl(GIT_URL_BASE + uuid);
+            } else {
+                repo.setUrl(HTTP_URL_BASE + uuid);
+            }
+            
             repos.add(repo);
         }
         
