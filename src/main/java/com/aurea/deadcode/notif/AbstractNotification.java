@@ -24,7 +24,7 @@ public abstract class AbstractNotification<E extends Enum<E>, T> implements Noti
 
     @Override
     public void notify(final Enum<E> eventType, final T event) {
-        jmsTemplate.send(queue, (session) -> {
+        jmsTemplate.send(queue, session -> {
             final TextMessage msg = session.createTextMessage(convertEventToText(event));
             msg.setStringProperty(eventType.getClass().getSimpleName(), eventType.toString());
             return msg;

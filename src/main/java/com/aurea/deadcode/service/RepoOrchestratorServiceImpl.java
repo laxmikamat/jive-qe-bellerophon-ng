@@ -6,11 +6,13 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.aurea.deadcode.jpa.ScmRepoRepository;
 import com.aurea.deadcode.model.ScmRepo;
 import com.aurea.deadcode.service.exception.ServiceException;
 
+@Service
 public class RepoOrchestratorServiceImpl implements RepoOrchestratorService {
     private static final Logger LOG = LoggerFactory.getLogger(RepoOrchestratorServiceImpl.class);
     
@@ -40,6 +42,7 @@ public class RepoOrchestratorServiceImpl implements RepoOrchestratorService {
             
             LOG.info("Updating repo data in DB: " + dbRepo);
             scmRepository.save(dbRepo);
+            
         } catch (final ServiceException e) {
             // log error
         }
