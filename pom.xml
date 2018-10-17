@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.aurea</groupId>
-  <artifactId>bellerophone-ng</artifactId>
+  <artifactId>bellerophon-ng</artifactId>
   <version>1.0</version>
 
   <properties>
@@ -29,12 +29,24 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>RELEASE</version>
+      <version>42.2.5.jre7</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
-      <artifactId></artifactId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.12</version>
     </dependency>
+    <dependency>
+      <groupId>com.oracle</groupId>
+      <artifactId>ojdbc6</artifactId>
+      <version>11.2.0.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>RELEASE</version>
+    </dependency>
+
     <dependency>
       <groupId>javax.ws.rs</groupId>
       <artifactId>javax.ws.rs-api</artifactId>
@@ -44,6 +56,11 @@
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
     </dependency>
 
     <dependency>
@@ -58,17 +75,7 @@
 
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-jms</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
     </dependency>
 
     <dependency>
@@ -98,6 +105,7 @@
 
   <profiles>
     <profile>
+      <id>default</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -112,7 +120,7 @@
                 <profile>default</profile>
                 <profile>jms</profile>
               </profiles>
-              <mainClass>com.aurea.bellerophone.Application</mainClass>
+              <mainClass>com.aurea.bellerophon.Application</mainClass>
               <jvmArguments>
                 -Xdebug
                 -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005
