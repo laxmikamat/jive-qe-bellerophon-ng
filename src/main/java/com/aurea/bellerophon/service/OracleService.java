@@ -15,15 +15,14 @@ public class OracleService implements DatabaseService {
 
     @Override
     public void drop(String databaseName) {
-        jdbc.execute("DROP USER " + databaseName);
+        jdbc.execute("DROP USER " + databaseName + " CASCADE");
     }
 
     @Override
     public void create(String databaseName) {
-        jdbc.execute(String.format(
-                "CREATE USER %s IDENTIFIED BY jiveadmin;\n" +
-                "GRANT CONNECT TO %s;\n" +
-                "GRANT CONNECT, RESOURCE, DBA TO %s;\n" +
-                "GRANT CREATE SESSION GRANT ANY PRIVILEGE TO %s;", databaseName));
+        jdbc.execute("CREATE USER " + databaseName + " IDENTIFIED BY jiveadmin");
+        jdbc.execute("GRANT CONNECT TO " + databaseName);
+        jdbc.execute("GRANT CONNECT, RESOURCE, DBA TO " + databaseName);
+        jdbc.execute("GRANT UNLIMITED TABLESPACE TO " + databaseName);
     }
 }
