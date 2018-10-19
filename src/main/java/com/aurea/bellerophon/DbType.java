@@ -27,6 +27,5 @@ public enum DbType {
         }
     };
 
-
     abstract DatabaseService newDatabaseService(DataSource dataSource);
 }
