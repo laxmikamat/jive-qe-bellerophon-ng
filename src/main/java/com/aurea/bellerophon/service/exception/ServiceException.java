@@ -6,15 +6,7 @@ public class ServiceException extends RuntimeException {
     private static final long serialVersionUID = 4689824299451271448L;
     private int errorCode = 500;
 
-    public ServiceException(final Throwable t) {
-        super(t);
-    }
-
-    public ServiceException(final String message, final Throwable t) {
-        super(message, t);
-    }
-
-    ServiceException(final String message, final int errorCode) {
+    public ServiceException(final String message, final int errorCode) {
         super(message);
         this.errorCode = errorCode;
     }

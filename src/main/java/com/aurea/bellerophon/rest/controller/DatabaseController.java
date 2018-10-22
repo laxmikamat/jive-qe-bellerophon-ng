@@ -1,10 +1,8 @@
 package com.aurea.bellerophon.rest.controller;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.WILDCARD;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
+import com.aurea.bellerophon.rest.DatabaseResource;
 import com.aurea.bellerophon.service.DatabaseService;
+import com.aurea.bellerophon.service.exception.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aurea.bellerophon.rest.DatabaseResource;
-
+import java.util.List;
 import java.util.Map;
+
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.WILDCARD;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
 @RequestMapping(value = "/database",
@@ -34,11 +35,7 @@ public class DatabaseController implements DatabaseResource {
                     @PathVariable("action") final String action,
                     @PathVariable("databaseName") final String databaseName) {
 
-        DatabaseService databaseService = databaseServiceMap.get(path);
-        if (databaseService == null) {
-            return new ResponseEntity<>("Unable to locate service for path: " + path, HttpStatus.NOT_FOUND);
-        }
-
+        DatabaseService databaseService = getDatabaseService(path);
         if (action == null) {
             return new ResponseEntity<>("Action is null", HttpStatus.BAD_REQUEST);
         }
@@ -61,5 +58,20 @@ public class DatabaseController implements DatabaseResource {
         }
 
         return new ResponseEntity<>("OK", HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(method = GET, path = "/{path}/list")
+    public ResponseEntity<List<String>> list(@PathVariable("path") final String path) {
+        return new ResponseEntity<>(getDatabaseService(path).list(), HttpStatus.OK);
+    }
+
+    private DatabaseService getDatabaseService(String path) {
+        DatabaseService databaseService = databaseServiceMap.get(path);
+        if (databaseService == null) {
+            throw new ServiceException("Unable to locate service for path: " + path, HttpStatus.NOT_FOUND.value());
+        }
+
+        return databaseService;
     }
 }

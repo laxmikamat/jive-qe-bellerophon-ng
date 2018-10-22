@@ -1,9 +1,9 @@
 package com.aurea.bellerophon.service;
 
-import com.aurea.bellerophon.service.DatabaseService;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 public class OracleService implements DatabaseService {
 
@@ -24,5 +24,10 @@ public class OracleService implements DatabaseService {
         jdbc.execute("GRANT CONNECT TO " + databaseName);
         jdbc.execute("GRANT CONNECT, RESOURCE, DBA TO " + databaseName);
         jdbc.execute("GRANT UNLIMITED TABLESPACE TO " + databaseName);
+    }
+
+    @Override
+    public List<String> list() {
+        return jdbc.query("SELECT username FROM dba_users WHERE username like '%JIVE%'", (rs, rowNum) -> rs.getString("username"));
     }
 }
